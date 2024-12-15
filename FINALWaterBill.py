@@ -28,6 +28,7 @@ def Title_Section(title):
     Title_Label("Corrales Ave. 27 Cagayan De Oro City NON-VAT REG. TIN 000-550-995-000")
 
     # *fields define the variables that will be used for the code. Anything under its positional parameter is consider a field and continues so on so forth.
+
 def section(parent, title, *fields):
     #Section'd Frame
     section_frame = tk.LabelFrame(parent, text=title, font=("Calibri", 14, "bold"), labelanchor="n")
@@ -53,7 +54,7 @@ def section(parent, title, *fields):
     return entries
 
 #On going progress on validating inputs
-def get_field_data(entries, field_name):
+def get_field_data(entries, field_name):    
     return entries[field_name].get()
 
 def check_values():
@@ -94,7 +95,6 @@ def consumed():
     present_value = int(get_field_data(Utility_Section, "Present"))
     
     total_consumed = present_value - previous_value
-    
 
 def rate_calc():
     global total_cost
@@ -121,7 +121,6 @@ def rate_calc():
         #https://licabwaterdistrict.gov.ph/water-rates/
     
     print(total_cost)
-
 
 def Form_Submit():
     '''
@@ -165,44 +164,13 @@ def Form_Submit():
     # Checks if they are an int value(Present/Previous)
     if not check_int():
         return
-    # If all validations pass
     
     rate_calc() #Calculates cost
-    display_inputs()
-    
-    
-    #NOTE: use same function for calculation of m3 consumed
-    #NOTE: make 2 validating checks, consider invalid if NO INPUTS 
-    # And the ones that check for if in put is a number or a word input
-    
+    display_inputs() # Displays the ENTRIES
 
-
-'''
-Residental_Rates = 3
-
-
-Commercial_Rates
-Industrial_Rates
-Government_Rates
-
-#For Government and Residential
-cost = 0
-consumed = Present - Previous
-
-if consumed  < 10:
-    cost = 229
-elif consumed > 10:
-    cost += cost
-    consumed -
-    
-elif consumed > 20:
-'''
-
-# Defines the tkinter window 
 mc = tk.Tk()
 mc.title("Water Bill Receipt Maker")
 mc.resizable(0,0) # Personal Choice: Makes UI unresizable. 0 makes it unresizable, a positive/negative number makes either or both x, y resizable
-
 
 # Contains TITLE, and 3 sections as the User Info, Address, Utility
 Title_Section("WATER BILL ONLINE FORM")
@@ -210,22 +178,11 @@ User_Section = section(mc, "Personal Info", "First Name", "Last Name", "Suffix(O
 Address_Section = section(mc, "Address", "Street", "Barangay", "City", "Province", "Zip Code")
 Utility_Section = section(mc, "Utility Report", "Previous", "Present", "Arrears", "Rate Type\n1: Commericial\n2: Residential\n3: Industrial\n4: Commercial")
 
-
-# For OOUTPUT values to be called
-    # NOTE: The field name HAS TO BE EXACT!!!
-    # User Info section
-
-
-
-
-# Button for popup (FOR HUMPEE)
-
 '''
 SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR 
 '''
 
 #OUTPUT UI
-
 #Function for showing Inputs
 def display_inputs():
     global total_cost
@@ -250,12 +207,12 @@ def display_inputs():
     total_cost = float(total_cost)
     Arrears = float(Arrears)
     
-    due_fees = 143 #Cost of being late for payment
+    due_fees = 143 #Cost of being late for payment\
+    VAT = float(total_cost) * 0.12
+    total_cost += Arrears
+    total_cost += VAT
     late_fee = total_cost + due_fees
     
-    VAT = float(total_cost) * 0.12
-    
-    total_cost += VAT
     
     
     nameLabel.config(text=f"Name: {First_Name} {Last_Name} {Suffix}")
@@ -265,10 +222,10 @@ def display_inputs():
     prevReadingLabel.config(text=f"Previous Reading (m³): {Previous}")
     currReadingLabel.config(text=f"Current Reading (m³): {Present}")
     cubicMeterLabel.config(text=f"Cubic Meters Consumed: {total_consumed}")
-    VatLabel.config(text=f"VAT 12%: {VAT}")
-    ArrearsLabel.config(text=f"Arrears: {Arrears}")
-    amountLabel.config(text=f"Total Amount (Pesos): {total_cost + Arrears}")
-    lateAmtdue_Label.config(text=f"₱:{late_fee}")
+    VatLabel.config(text=f"VAT 12%: {VAT:.2f}")
+    ArrearsLabel.config(text=f"Arrears: {Arrears:.2f}")
+    amountLabel.config(text=f"Total Amount (Pesos): {total_cost:.2f}")
+    lateAmtdue_Label.config(text=f"₱:{late_fee:.2f}")
     
     containerFrame.pack(fill="both", expand=True, padx=10, pady=10)
     mc.destroy()
@@ -297,7 +254,6 @@ customerInfoFrame.columnconfigure(1, weight=1)
 nameLabel = tk.Label(customerInfoFrame, text=f"Name: ", font=('Consolas', 12))
 nameLabel.grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
 
-
 # Address Label 
 addressLabel = tk.Label(customerInfoFrame, text=f"Address: ", font=('Consolas', 12))
 addressLabel.grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
@@ -309,7 +265,6 @@ NoLabel.grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
 # WIN Label
 WINLabel = tk.Label(customerInfoFrame, text=f"WIN #:{WIN}", font=('Consolas', 12))
 WINLabel.grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-
 
 # Place the Customer Info Frame at the top of the container
 customerInfoFrame.pack(fill = "x", anchor="w", pady=5)
@@ -323,11 +278,9 @@ readingsFrame.columnconfigure(1, weight=1)
 prevReadingLabel = tk.Label(readingsFrame, text=f"Previous Reading (m³): ", font=('Consolas', 12))
 prevReadingLabel.grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
 
-
 # Current Reading
 currReadingLabel = tk.Label(readingsFrame, text=f"Current Reading (m³): ", font=('Consolas', 12))
 currReadingLabel.grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
-
 
 # Place the Readings Frame below the Customer Info Frame
 readingsFrame.pack(fill = "x", anchor="w", pady=5)
@@ -340,7 +293,6 @@ cubicMeterFrame.columnconfigure(1, weight=1)
 # Cubic Meter Label 
 cubicMeterLabel = tk.Label(cubicMeterFrame, text=f"Cubic Meters Consumed: ", font=('Consolas', 12))
 cubicMeterLabel.grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
-
 
 # Place the Cubic Meter Frame below the Readings Frame
 cubicMeterFrame.pack(fill = "x", anchor="w", pady=5)
@@ -361,12 +313,6 @@ ArrearsLabel.grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
 # Amount Label 
 amountLabel = tk.Label(amountFrame, text=f"Total Amount (Pesos): ", font=('Consolas', 12))
 amountLabel.grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
-
-
-
-
-
-
 
 # Place the Amount Frame below the Cubic Meter Frame
 amountFrame.pack(fill = "x", anchor="w", pady=5)
