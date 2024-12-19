@@ -177,34 +177,31 @@ def Form_Submit():
     display_inputs() # Displays the ENTRIES
 
 def payment():
-    global total_cost
+    global total_cost 
     
     cost = total_cost
-    cash_payment = simpledialog.askfloat("INSERT PAYMENT AMOUNT", "Enter payment amount:")
+    while True:  # Loops until all conditions are fulfilled
+        cash_payment = simpledialog.askfloat("Insert Payment Amount", "Enter payment amount:")
+        
+        if cash_payment is None: 
+            retry = messagebox.askyesno("Restart", "No amount entered. Do you want to retry?")
+            if not retry:
+                root.destroy()  # Exits program if person cancels their input
+                return
+            continue
+        if cash_payment < 0:  # Error to negative integers
+            messagebox.showwarning("Invalid Input", "Please enter a positive amount.")
+            continue
+        if cash_payment < cost:  # Lack in payment
+            messagebox.showwarning("Insufficient Payment", "Payment must be equal to or greater than the total cost.")
+            continue
+        
+        change = cash_payment - cost
+        messagebox.showinfo("Thank You", f"You paid: {cash_payment}\nYour Change: {change}")
+        messagebox.showinfo("Closing", "Thank you for using our service.")
+        root.destroy()  
+        return
 
-    Change = cash_payment - cost
-    
-    if cash_payment is None:
-        messagebox.showwarning("NO INPUT", "Please provide an amount")
-        repayment()
-    elif cash_payment < 0:
-        messagebox.showwarning("ERROR", "Please a valid integer")
-        repayment()
-    elif cash_payment < cost:
-        messagebox.showwarning("INSUFFICIENT", "Please provide an equal or higher integer for payment")
-        repayment()
-    
-    messagebox.showinfo("THANK YOU", f"You paid: {cash_payment}\nYour Change: {Change}")
-    messagebox.showinfo("Closing","Thank You for your use of our service")    
-    root.destroy()
-
-
-def repayment():
-    ask_cancel = tk.messagebox.askyesno("Question", "Are you sure to cancel your payment?")
-    if ask_cancel:
-        payment()
-    else:
-        root.destroy()
     
 
 mc = tk.Tk()
