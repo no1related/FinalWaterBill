@@ -195,9 +195,8 @@ def payment():
         if cash_payment < cost:  # Lack in payment
             messagebox.showwarning("Insufficient Payment", "Payment must be equal to or greater than the total cost.")
             continue
-        
         change = cash_payment - cost
-        messagebox.showinfo("Thank You", f"You paid: {cash_payment}\nYour Change: {change}")
+        messagebox.showinfo("Thank You", f"You paid: {cash_payment}\nYour Change: {change:.2f}")
         messagebox.showinfo("Closing", "Thank you for using our service.")
         root.destroy()  
         return
