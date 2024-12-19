@@ -52,6 +52,8 @@ def section(parent, title, *fields):
         
         if field == "Arrears":
             entry.insert(0, "0") #Defaults the Arrears to 0
+        if field == "Suffix(Optional)":  # Defaults to a blank space...
+            entry.insert(0, " ")
         # Store Entries
         entries[field] = entry
     
@@ -126,8 +128,8 @@ def rate_calc():
         total_cost = total_consumed * 50.60
         #https://licabwaterdistrict.gov.ph/water-rates/
     
+    # PRINT:TOTAL_cOST TEST
     print(total_cost)
-
 def Form_Submit():
     '''
     Info_Section
@@ -427,3 +429,6 @@ mc.mainloop()
 2. Create Change Operations
 3. Create Input for amount to pay
 '''
+
+
+ 
