@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox #for the pop-up message testing
 import random
+from tkinter import simpledialog
 from datetime import datetime, timedelta
 
 root = tk.Tk()  
@@ -29,6 +30,8 @@ def Title_Section(title):
 
     # *fields define the variables that will be used for the code. Anything under its positional parameter is consider a field and continues so on so forth.
 
+
+
 def section(parent, title, *fields):
     #Section'd Frame
     section_frame = tk.LabelFrame(parent, text=title, font=("Calibri", 14, "bold"), labelanchor="n")
@@ -47,16 +50,19 @@ def section(parent, title, *fields):
         entry = tk.Entry(section_frame, font=("Calibri", 10))
         entry.grid(row = idx, column = 1, sticky= "w", padx =5, pady =1)
         
+        if field == "Arrears":
+            entry.insert(0, "0") #Defaults the Arrears to 0
         # Store Entries
         entries[field] = entry
     
     # Returns to entries(entries = {}) after finishing a field name
     return entries
 
-#On going progress on validating inputs
-def get_field_data(entries, field_name):    
+# Collects *field data
+def get_field_data(entries, field_name):
     return entries[field_name].get()
 
+#TRUE/FALSE
 def check_values():
     # Retrieve and compare Present and Previous values
     previous_value = float(get_field_data(Utility_Section, "Previous"))
@@ -67,7 +73,7 @@ def check_values():
         messagebox.showerror("INPUT ERROR", "PRESENT value cannot be lower than PREVIOUS value")
         return False
     return True
-
+#Checks whether Previous/Present values are postive integers
 def check_int():
     try:
     
@@ -107,16 +113,16 @@ def rate_calc():
         return
     
     if rate_type == 1:
-        type = str("Governmental")
+       # type = str("Governmental")
         total_cost = total_consumed * 25.30
     elif rate_type == 2:
-        type = str("Residential")
+       # type = str("Residential")
         total_cost = total_consumed * 25.30
     elif rate_type == 3:
-        type = str("Industrial")
+      #  type = str("Industrial")
         total_cost = total_consumed * 50.60
     elif rate_type == 4:
-        type = str("Commercial")
+       # type = str("Commercial")
         total_cost = total_consumed * 50.60
         #https://licabwaterdistrict.gov.ph/water-rates/
     
@@ -154,7 +160,9 @@ def Form_Submit():
     no_input3 = next((field for field, value in input_data.items() if not value), None)
     if no_input3:
         messagebox.showerror("ERROR TRY AGAIN", f"There is no input in {no_input3}")
-        return no_input3      
+        return no_input3  
+
+    
     
     # Check if Present value is greater than or equal to Previous value
     if not check_values():
@@ -168,15 +176,49 @@ def Form_Submit():
     rate_calc() #Calculates cost
     display_inputs() # Displays the ENTRIES
 
+def payment():
+    global total_cost
+    
+    cost = total_cost
+    cash_payment = simpledialog.askfloat("INSERT PAYMENT AMOUNT", "Enter payment amount:")
+
+    Change = cash_payment - cost
+    
+    if cash_payment is None:
+        messagebox.showwarning("NO INPUT", "Please provide an amount")
+        repayment()
+    elif cash_payment < 0:
+        messagebox.showwarning("ERROR", "Please a valid integer")
+        repayment()
+    elif cash_payment < cost:
+        messagebox.showwarning("INSUFFICIENT", "Please provide an equal or higher integer for payment")
+        repayment()
+    
+    messagebox.showinfo("THANK YOU", f"You paid: {cash_payment}\nYour Change: {Change}")
+    messagebox.showinfo("Closing","Thank You for your use of our service")    
+    root.destroy()
+
+
+def repayment():
+    ask_cancel = tk.messagebox.askyesno("Question", "Are you sure to cancel your payment?")
+    if ask_cancel:
+        payment()
+    else:
+        root.destroy()
+    
+
 mc = tk.Tk()
 mc.title("Water Bill Receipt Maker")
 mc.resizable(0,0) # Personal Choice: Makes UI unresizable. 0 makes it unresizable, a positive/negative number makes either or both x, y resizable
 
 # Contains TITLE, and 3 sections as the User Info, Address, Utility
 Title_Section("WATER BILL ONLINE FORM")
+
+
 User_Section = section(mc, "Personal Info", "First Name", "Last Name", "Suffix(Optional)",  "Contact Number")
 Address_Section = section(mc, "Address", "Street", "Barangay", "City", "Province", "Zip Code")
 Utility_Section = section(mc, "Utility Report", "Previous", "Present", "Arrears", "Rate Type\n1: Commericial\n2: Residential\n3: Industrial\n4: Commercial")
+
 
 '''
 SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR SEPERATOR 
@@ -216,7 +258,7 @@ def display_inputs():
     
     
     nameLabel.config(text=f"Name: {First_Name} {Last_Name} {Suffix}")
-    NoLabel.config(text=f"Address: {Contact_Number}")
+    NoLabel.config(text=f"Contact #: {Contact_Number}")
     addressLabel.config(text=f"Address: {Street}, {Barangay}, {City}, {Province}, {Zip_Code}")
     WINLabel.config(text=f"WIN #:{WIN}")
     prevReadingLabel.config(text=f"Previous Reading (m³): {Previous}")
@@ -229,6 +271,7 @@ def display_inputs():
     
     containerFrame.pack(fill="both", expand=True, padx=10, pady=10)
     mc.destroy()
+    payment()
 
 # Title Label
 label = tk.Label(root, text="Cagayan De Oro Water District", font=('Consolas', 12), bd=2, relief="ridge", bg="lightblue", fg="black")
@@ -326,13 +369,13 @@ detailFrame.columnconfigure(3, weight=1)
 
 # ROW 0 (labels)
 readingDate = tk.Label(detailFrame, text="READING DATE", font=('Consolas', 12), bd=1, relief="solid")
-readingDate.grid(row=0, column=0, sticky=tk.W + tk.E, padx=5, pady=5)
+readingDate.grid(row=0, column=0, sticky="we", padx=5, pady=5)
 dateDue = tk.Label(detailFrame, text="DATE DUE", font=('Consolas', 12), bd=1, relief="solid")
-dateDue.grid(row=0, column=1, sticky=tk.W + tk.E, padx=5, pady=5)
+dateDue.grid(row=0, column=1, sticky="we", padx=5, pady=5)
 amountDueLate = tk.Label(detailFrame, text="AMOUNT DUE AFTER DUE DATE", font=('Consolas', 12), bd=1, relief="solid")
-amountDueLate.grid(row=0, column=2, sticky=tk.W + tk.E, padx=5, pady=5)
+amountDueLate.grid(row=0, column=2, sticky="we", padx=5, pady=5)
 month = tk.Label(detailFrame, text="FOR THE MONTH OF", font=('Consolas', 12), bd=1, relief="solid")
-month.grid(row=0, column=3, sticky=tk.W + tk.E, padx=5, pady=5)
+month.grid(row=0, column=3, sticky="we", padx=5, pady=5)
 
 # ROW 1 (results)
 # Reading date
@@ -382,3 +425,9 @@ show_button.pack(pady=10, padx =15, fill="x")
 
 
 mc.mainloop()
+
+'''
+1. Make No Arrears Input to 0
+2. Create Change Operations
+3. Create Input for amount to pay
+'''
